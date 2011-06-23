@@ -1,5 +1,6 @@
 #include <util/delay.h>
 #include <arduino/pins.h>
+#include <arduino/serial.h>
 
 #define LATCH 4
 #define CLOCK 3
@@ -11,6 +12,8 @@
 #define MAX_R 50
 #define MAX_G 100
 #define MAX_B 100
+
+#include "serial.c"
 
 static uint8_t leds[48] = {
 	0,   0,   0,   
@@ -144,6 +147,9 @@ main()
 {
 	uint8_t i;
 
+	/* initialize serial communication */
+	serial_init(9600, 8n1);
+
 	pin_mode_output(LATCH);
 	pin_mode_output(CLOCK);
 	pin_mode_output(DATA);
@@ -165,7 +171,17 @@ main()
 		*/
 	}
 
+	/* enable interrupts */
+	sei();
+
 	while (1) {
+		while (serial_available()) {
+			uint8_t c = serial_getchar();
+
+			if (c == '7')
+				serial_print("lol\n");
+		}
+
 		pwm();
 	}
 }

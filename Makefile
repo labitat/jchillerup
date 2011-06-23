@@ -3,6 +3,7 @@ OBJCOPY = avr-objcopy
 OBJDUMP = avr-objdump
 AVRDUDE = avrdude
 STTY = stty
+CAT = cat
 ARDUINO_HEADERS = .
 
 NAME = jchillerup
@@ -57,8 +58,11 @@ upload: $(NAME).hex
 list: $(NAME).lss
 
 tty:
-	@echo '  STTY -F$(PORT) cs8 parenb raw -echo 57600'
-	@$(STTY) -F$(PORT) cs8 parenb raw -echo 57600
+	@echo '  STTY -F$(PORT) raw -echo cs8 -parenb -cstopb 9600'
+	@$(STTY) -F$(PORT) raw -echo cs8 -parenb -cstopb 9600
+
+cat:
+	@$(CAT) $(PORT)
 
 clean:
 	rm -f *.o *.elf *.hex *.lss
